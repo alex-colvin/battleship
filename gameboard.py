@@ -40,6 +40,7 @@ class GameBoard:
         
 
     def move_item (self, item):
+        self.display_grid(item)
         while True:
             print(f"""Insructions:
             Up: w
@@ -48,26 +49,37 @@ class GameBoard:
             Right: d
             To place {item.name}, press SPACE BAR, then ENTER :""")
             self.move_direction = input(f"Enter an option above to move the {item.name} :")
+            self.clear_square(item)
             if self.move_direction == "w":
-                self.grid[item.y][item.x] = "[ ]"
-                item.y -= 1
-                self.grid[item.y][item.x] = "[item.identifyer]"
+                if item.y == 0:
+                    item.y = 9
+                else:
+                    item.y -= 1
             elif self.move_direction == "s":
-                self.grid[item.y][item.x] = "[ ]"
-                item.y += 1
-                self.grid[item.y][item.x] = "[item.identifyer]"
+                if item.y == 9:
+                    item.y = 0
+                else:
+                    item.y += 1
             elif self.move_direction == "a":
-                self.grid[item.y][item.x] = "[ ]"
-                item.x -= 1
-                self.grid[item.y][item.x] = "[item.identifyer]"
+                if item.x == 0:
+                    item.x = 9
+                else:
+                    item.x -= 1
             elif self.move_direction == "d":
-                self.grid[item.y][item.x] = "[ ]"
-                item.x += 1
-                self.grid[item.y][item.x] = "[item.identifyer]"
-            elif self.move_direction == " ":
-                break
+                if item.x == 9:
+                    item.x = 0
+                else:
+                    item.x += 1
+            self.populate_square(item)
             self.display_grid(item)
-
+            if self.move_direction == " ":
+                break
+        
     def run_game(self):
-        self.display_grid(self.curser)
         self.move_item(self.curser)
+    
+    def clear_square(self, item):
+        self.grid[item.y][item.x] = "[ ]"
+    
+    def populate_square(self, item):
+        self.grid[item.y][item.x] = "[item.identifyer]"
