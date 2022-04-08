@@ -6,7 +6,7 @@ class GameBoard:
         self.name = ''
         self.square = ''
         self.score_board = ''
-        self.grid = [["[ ]" for y in range(10)] for x in range(10)]
+        self.grid = []
         self.curser = Item("Curser", 1, "I")
         self.hit = Item("Hit", 1, "X")
         self.miss = Item("Miss", 1, "O")
@@ -30,17 +30,33 @@ class GameBoard:
     def display_sunk_ships(self):
         pass
 
-    def place_ship(self, ship):
-        pass
-
-    def display_grid(self, item):
-        self.grid[item.y][item.x] = item.identifyer
-        for i in self.grid:
-            print(" ".join(i))
+    def display_ship_on_grid(self, ship):
         
+        self.display_item_grid(ship)
 
+    def clear_ship(self, ship):
+        pass
+         
+    def display_item_grid(self, item):
+        if item.size > 1:
+            item.generate_ship_coordinates()
+            if item.is_vertical == True:
+                for p in item.y_coordinates:
+                    self.grid[p][item.x] = item.identifyer
+            else:
+                for p in item.x_coordinates:
+                    self.grid[item.y][p] = item.identifyer
+        elif item.size == 1:
+            self.grid[item.y][item.x] = item.identifyer
+        for cell in self.grid:
+            print(" ".join(cell))
+    
+    def generate_grid(self, rows, columns):
+        for y in range(0, rows):
+            self.grid.append(["[ ]" for x in range(0, columns)])
+#working on moving ships around and boundaries...
     def move_item (self, item):
-        self.display_grid(item)
+        self.display_item_grid(item)
         while True:
             print(f"""Insructions:
             Up: w
@@ -49,10 +65,10 @@ class GameBoard:
             Right: d
             To place {item.name}, press SPACE BAR, then ENTER :""")
             self.move_direction = input(f"Enter an option above to move the {item.name} :")
-            self.clear_square(item)
+            self.clear_item(item)
             if self.move_direction == "w":
                 if item.y == 0:
-                    item.y = 9
+                    item.y = 10 - item.size
                 else:
                     item.y -= 1
             elif self.move_direction == "s":
@@ -66,20 +82,30 @@ class GameBoard:
                 else:
                     item.x -= 1
             elif self.move_direction == "d":
-                if item.x == 9:
+                if item.x == 9 + item.size == 10:
                     item.x = 0
                 else:
                     item.x += 1
-            self.populate_square(item)
-            self.display_grid(item)
+            self.display_item_grid(item)
             if self.move_direction == " ":
                 break
         
     def run_game(self):
+        self.generate_grid(10, 10)
         self.move_item(self.curser)
+        self.move_item(self.battleship)
     
-    def clear_square(self, item):
-        self.grid[item.y][item.x] = "[ ]"
+    def clear_item(self, item):
+        if item.size > 1:
+            if item.is_vertical == True:
+                for p in item.y_coordinates:
+                    self.grid[p][item.x] = "[ ]"
+            else:
+                for p in item.x_coordinates:
+                    self.grid[item.y][p] = "[ ]"
+            item.clear_coordinates()
+        else:
+            self.grid[item.y][item.x] = "[ ]"
     
-    def populate_square(self, item):
-        self.grid[item.y][item.x] = "[item.identifyer]"
+    # def populate_item(self, item):
+        # self.grid[item.y][item.x] = "[item.identifyer]"
