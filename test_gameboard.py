@@ -3,7 +3,7 @@ from gameboard import GameBoard
 
 class TestPlayer(unittest.TestCase):
     board = GameBoard()
-    board.display_grid()
+    board.run_game()
 
 
 
