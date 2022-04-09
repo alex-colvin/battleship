@@ -54,10 +54,9 @@ class GameBoard:
     def generate_grid(self, rows, columns):
         for y in range(0, rows):
             self.grid.append(["[ ]" for x in range(0, columns)])
-#working on moving ships around and boundaries...
     def move_item (self, item):
-        self.display_item_grid(item)
         while True:
+            self.display_item_grid(item)
             print(f"""Insructions:
             Up: w
             Down: s
@@ -67,26 +66,33 @@ class GameBoard:
             self.move_direction = input(f"Enter an option above to move the {item.name} :")
             self.clear_item(item)
             if self.move_direction == "w":
-                if item.y == 0:
+                if item.y == 0 and item.is_vertical == True:
                     item.y = 10 - item.size
+                elif item.y == 0:
+                    item.y = 9 
                 else:
                     item.y -= 1
             elif self.move_direction == "s":
-                if item.y == 9:
+                if item.y == 10 - item.size and item.is_vertical == True:
+                    item.y = 0
+                elif item.y == 9:
                     item.y = 0
                 else:
                     item.y += 1
             elif self.move_direction == "a":
-                if item.x == 0:
+                if item.x == 0 and item.is_vertical == False:
+                    item.x = 10 - item.size
+                elif item.x == 0:
                     item.x = 9
                 else:
                     item.x -= 1
             elif self.move_direction == "d":
-                if item.x == 9 + item.size == 10:
+                if item.x == 10 - item.size and item.is_vertical ==False:
+                    item.x = 0
+                elif item.x == 9:
                     item.x = 0
                 else:
                     item.x += 1
-            self.display_item_grid(item)
             if self.move_direction == " ":
                 break
         
@@ -106,6 +112,3 @@ class GameBoard:
             item.clear_coordinates()
         else:
             self.grid[item.y][item.x] = "[ ]"
-    
-    # def populate_item(self, item):
-        # self.grid[item.y][item.x] = "[item.identifyer]"

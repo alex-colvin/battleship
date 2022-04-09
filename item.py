@@ -6,3 +6,4 @@ class Item:
         self.y = 4
         self.identifyer = f"[{identifyer}]"
         self.position = None
+        self.is_vertical = True
