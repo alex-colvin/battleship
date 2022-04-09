@@ -7,3 +7,4 @@ class Item:
         self.identifyer = f"[{identifyer}]"
         self.position = None
         self.is_vertical = True
+        self.is_set = False

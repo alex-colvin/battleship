@@ -24,3 +24,9 @@ class Ship(Item):
         else:
             self.x_coordinates.clear()
 
+    def toggle_vertical(self):
+        self.is_vertical = False
+        self.clear_coordinates()
+        self.generate_ship_coordinates()
+
+
