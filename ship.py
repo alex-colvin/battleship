@@ -26,7 +26,7 @@ class Ship(Item):
             self.x_coordinates.clear()
 
     def toggle_vertical(self):
-        self.is_vertical = False
+        self.is_vertical = not self.is_vertical
         self.generate_ship_coordinates()
 
 
