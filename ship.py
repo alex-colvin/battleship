@@ -9,6 +9,7 @@ class Ship(Item):
         self.is_vertical = True
 
     def generate_ship_coordinates(self):
+        self.clear_coordinates()
         if self.is_vertical == True:
             self.y_end = self.y + self.size
             for y in range(self.y,self.y_end):
@@ -26,7 +27,6 @@ class Ship(Item):
 
     def toggle_vertical(self):
         self.is_vertical = False
-        self.clear_coordinates()
         self.generate_ship_coordinates()
 
 

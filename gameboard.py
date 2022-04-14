@@ -34,9 +34,9 @@ class GameBoard:
         pass
 
     def check_collisions(self, ship):
-
+        ship.generate_ship_coordinates()
         for boat in self.ships:
-            if boat == ship:
+            if boat.name == ship.name:
                 pass
             elif ship.is_vertical == True:
                 if boat.is_vertical == True:
@@ -45,6 +45,7 @@ class GameBoard:
                             for z in boat.y_coordinates:
                                 if y == z:
                                     self.collision_exists = True
+                                    break
                 else:
                     for x in boat.x_coordinates:
                         if ship.x == x:
@@ -100,7 +101,7 @@ class GameBoard:
     def get_move_input (self, item):
         item.is_set = True
         while True:
-            self.display_set_ships()
+            self.display_set_ships()        
             self.display_grid(item)
             print(f"""Insructions:
             Up: w
@@ -147,10 +148,12 @@ class GameBoard:
         elif self.move_direction == 't':
             if item.size > 1:
                 item.toggle_vertical()
-                
+
         self.check_collisions(item)
         if self.collision_exists == True:
             self.move_back(item)
+        
+        
 
     def move_back(self, item):
         if self.collision_exists == True:
@@ -162,6 +165,7 @@ class GameBoard:
                 self.move_direction = "d"
             elif self.move_direction == "d":
                 self.move_direction = "a"
+        self.collision_exists = False
         self.move_item(item)
     
 
