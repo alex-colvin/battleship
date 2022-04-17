@@ -54,18 +54,19 @@ class GameBoard:
                             for y in ship.y_coordinates:
                                 if y == boat.y:
                                     self.collision_exists = True
-            elif boat.is_vertical == False:
+            elif ship.is_vertical == False:
+                if boat.is_vertical == False:
                     if ship.y == boat.y:
                         for x in ship.x_coordinates:
                             for w in boat.x_coordinates:
                                 if x == w:
                                     self.collision_exists = True
-                    else:
-                        for y in boat.y_coordinates:
-                            if ship.y == y:
-                                for x in ship.x_coordinates:
-                                    if x == boat.y:
-                                        self.collision_exists = True
+                else:
+                    for y in boat.y_coordinates:
+                        if ship.y == y:
+                            for x in ship.x_coordinates:
+                                if x == boat.x:
+                                    self.collision_exists = True
                 
             
 
@@ -121,8 +122,9 @@ class GameBoard:
             self.clear_item(item)
             self.move_item(item)
             if self.move_direction == " ":
-                for move in self.move_directions[::-1]:                              
-                    while self.collision_exists == True:
+                self.collision_exists = True
+                while self.collision_exists == True:
+                    for move in self.move_directions[::-1]:          
                         self.check_collisions(item)
                         if self.collision_exists == False:
                             break
