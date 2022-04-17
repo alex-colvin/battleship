@@ -1,7 +1,7 @@
 from item import Item
 class Ship(Item):
     def __init__(self, name, size, identifyer):
-        super().__init__(name, size, identifyer)
+        super().__init__(name, size, identifyer, x_start=0)
         self.x_end = self.x + self.size
         self.y_end = self.y + self.size
         self.x_coordinates = []

@@ -7,17 +7,17 @@ class GameBoard:
         self.square = ''
         self.score_board = ''
         self.grid = []
-        self.curser = Item("Curser", 1, "I")
-        self.hit = Item("Hit", 1, "X")
-        self.miss = Item("Miss", 1, "O")
-        self.destroyer = Ship("Destroyer", 2, "D")
-        self.submarine = Ship("Submarine", 3, "S")
-        self.battleship_1 = Ship("Battleship_1", 4, "B")
-        self.battleship_2 = Ship("Battleship_2", 4, "B" )
-        self.aircraft_carrier = Ship("Aircraft Carrier", 5, "A")
+        self.curser = Item("Curser", 1, "I",10)
+        # self.hit = Item("Hit", 1, "X")
+        # self.miss = Item("Miss", 1, "O")
+        # self.destroyer = Ship("Destroyer", 2, "D")
+        # self.submarine = Ship("Submarine", 3, "S")
+        # self.battleship_1 = Ship("Battleship_1", 4, "B")
+        # self.battleship_2 = Ship("Battleship_2", 4, "B" )
+        # self.aircraft_carrier = Ship("Aircraft Carrier", 5, "A")
         self.move_direction = ''
         self.move_directions = ['a','s','d','w']
-        self.ships = [self.destroyer, self.submarine, self.battleship_1, self.aircraft_carrier, self.battleship_2]
+        # self.ships = [self.destroyer, self.submarine, self.battleship_1, self.aircraft_carrier, self.battleship_2]
         self.collision_exists = True
         #make item, hit and miss an item and make an item class
         
@@ -34,10 +34,10 @@ class GameBoard:
     def display_sunk_ships(self):
         pass
 
-    def check_collisions(self, ship):
+    def check_collisions(self, ship, ships):
         ship.generate_ship_coordinates()
         self.collision_exists = False
-        for boat in self.ships:
+        for boat in ships:
             if boat.name == ship.name:
                 pass
             elif ship.is_vertical == True:
@@ -89,8 +89,8 @@ class GameBoard:
             self.grid[item.y][item.x] = item.identifyer
 
 
-    def display_set_ships(self):
-        for ship in self.ships:
+    def display_set_ships(self, ships):
+        for ship in ships:
             if ship.is_set == True:
                 self.mark_identifyer(ship)
                 
@@ -101,13 +101,13 @@ class GameBoard:
     def generate_grid(self, rows, columns):
         for y in range(0, rows):
             self.grid.append(["[ ]" for x in range(0, columns)])
-    def get_move_input (self, item):
+    def get_move_input (self, item, ships):
         item.is_set = True
-        self.display_set_ships()
+        self.display_set_ships(ships)
         if item.name != "Battleship_1":
             self.ship_initial_display(item)
         while True:
-            self.display_set_ships()        
+            self.display_set_ships(ships)        
             self.display_grid(item)
             print(f"""Insructions:
             Up: w
@@ -121,22 +121,18 @@ class GameBoard:
             # move_direction = input(f"Enter an option above to move the {item.name} :")
             self.clear_item(item)
             self.move_item(item)
-            self.set(item)
+            self.set(item, ships)
             if self.move_direction == " ":
                 break
             else:
                 self.move_directions.append(self.move_direction)
-                    # collision backup
-# previous moves needs to be a list.
-#loop check collision move back
-#clear the previous moves list after its set.
-                #need to place check collisions here and store user input as local variable to pass to move back               
-    def set(self, item):
+                   
+    def set(self, item, ships):
         if self.move_direction == " ":
             self.collision_exists = True
             while self.collision_exists == True:
                 for move in self.move_directions[::-1]:          
-                    self.check_collisions(item)
+                    self.check_collisions(item, ships)
                     if self.collision_exists == False:
                         break
                     self.move_direction = move
@@ -175,6 +171,7 @@ class GameBoard:
 
             
     def move_item(self, item):
+
         if self.move_direction == "w":
             if item.y == 0 and item.is_vertical == True:
                 item.y = 10 - item.size
@@ -209,14 +206,7 @@ class GameBoard:
             elif item.y > 10 - item.size and item.is_vertical == False:
                 pass
             else:
-                item.toggle_vertical()
-             
-            
-
-        # self.check_collisions(item)
-        # if self.collision_exists == True:
-        #     self.move_back(item)
-        
+                item.toggle_vertical()               
         
 
     def move_back(self, item):
@@ -232,16 +222,15 @@ class GameBoard:
         self.collision_exists = False
         self.move_item(item) 
             
-    def place_ships(self):
-        self.get_move_input(self.battleship_1)
-        self.get_move_input(self.battleship_2)
-        self.get_move_input(self.aircraft_carrier)
-        self.get_move_input(self.submarine)
-        self.get_move_input(self.destroyer)
+    # def place_ships(self):
+    #     self.get_move_input(self.battleship_1)
+    #     self.get_move_input(self.battleship_2)
+    #     self.get_move_input(self.aircraft_carrier)
+    #     self.get_move_input(self.submarine)
+    #     self.get_move_input(self.destroyer)
 
     def run_game(self):
-        self.generate_grid(10, 10)
-        self.place_ships()
+        self.generate_grid(10, 20)
     
     def clear_item(self, item):
         if item.size > 1:
