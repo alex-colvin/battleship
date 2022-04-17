@@ -12,11 +12,11 @@ class GameBoard:
         self.miss = Item("Miss", 1, "O")
         self.destroyer = Ship("Destroyer", 2, "D")
         self.submarine = Ship("Submarine", 3, "S")
-        self.battleship_1 = Ship("battleship_1", 4, "B")
+        self.battleship_1 = Ship("Battleship_1", 4, "B")
         self.battleship_2 = Ship("Battleship_2", 4, "B" )
         self.aircraft_carrier = Ship("Aircraft Carrier", 5, "A")
         self.move_direction = ''
-        self.move_directions = []
+        self.move_directions = ['a','s','d','w']
         self.ships = [self.destroyer, self.submarine, self.battleship_1, self.aircraft_carrier, self.battleship_2]
         self.collision_exists = True
         #make item, hit and miss an item and make an item class
@@ -70,7 +70,6 @@ class GameBoard:
                 
             
 
-#   PLACE COLLISION DETECTION INISDE MOVE ITEM IF " " IS SELECTED
 #   TO SEPARATE GRIDS PLACE | AT X 10 
 #   EXPAND GRIDS TO X 20
 #   GRID.Y 0 LINE SHOULD HAVE MY SHIPS AND ENEMY SHIPS HEADER
@@ -104,8 +103,9 @@ class GameBoard:
             self.grid.append(["[ ]" for x in range(0, columns)])
     def get_move_input (self, item):
         item.is_set = True
-        self.collision_exists = True
-        self.move_directions.clear()
+        self.display_set_ships()
+        if item.name != "Battleship_1":
+            self.ship_initial_display(item)
         while True:
             self.display_set_ships()        
             self.display_grid(item)
@@ -121,15 +121,7 @@ class GameBoard:
             # move_direction = input(f"Enter an option above to move the {item.name} :")
             self.clear_item(item)
             self.move_item(item)
-            if self.move_direction == " ":
-                self.collision_exists = True
-                while self.collision_exists == True:
-                    for move in self.move_directions[::-1]:          
-                        self.check_collisions(item)
-                        if self.collision_exists == False:
-                            break
-                        self.move_direction = move
-                        self.move_back(item)
+            self.set(item)
             if self.move_direction == " ":
                 break
             else:
@@ -139,8 +131,49 @@ class GameBoard:
 #loop check collision move back
 #clear the previous moves list after its set.
                 #need to place check collisions here and store user input as local variable to pass to move back               
+    def set(self, item):
+        if self.move_direction == " ":
+            self.collision_exists = True
+            while self.collision_exists == True:
+                for move in self.move_directions[::-1]:          
+                    self.check_collisions(item)
+                    if self.collision_exists == False:
+                        break
+                    self.move_direction = move
+                    self.move_back(item)
 
+    def ship_initial_display(self, ship):#x is the right index
+        for x in range(10):
+            n = 0
+            for y in range(10):
+                if self.grid[y][x] == '[ ]':
+                    n += 1
+                else:
+                    n = 0
+                if n == ship.size:
+                    ship.x = x
+                    ship.y = y - ship.size + 1
+                    break
+            if n == ship.size:
+                break
 
+        # def generate_grid(self, rows, columns):
+        # for y in range(0, rows):
+        #     self.grid.append(["[ ]" for x in range(0, columns)])
+        
+    # def mark_identifyer(self, item):
+    #     if item.size > 1:
+    #         item.generate_ship_coordinates()
+    #         if item.is_vertical == True:
+    #                 for p in item.y_coordinates:
+    #                     self.grid[p][item.x] = item.identifyer
+    #         else:
+    #             for p in item.x_coordinates:
+    #                 self.grid[item.y][p] = item.identifyer
+    #     elif item.size == 1:
+    #         self.grid[item.y][item.x] = item.identifyer
+
+            
     def move_item(self, item):
         if self.move_direction == "w":
             if item.y == 0 and item.is_vertical == True:
