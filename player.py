@@ -27,7 +27,7 @@ class Player:
 
     def fire(self, ships):
         # move the curser
-        self.gameboard.get_move_input(self.gameboard.curser, ships)
+        self.gameboard.get_move_input(self.gameboard.curser, self.gameboard.hits_misses_curser)
         # select the position
         # check collision on other players board
         # if collision exists hit...else miss

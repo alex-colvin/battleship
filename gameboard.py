@@ -1,5 +1,6 @@
 from item import Item
 from ship import Ship
+import inspect
 class GameBoard:
     def __init__(self) -> None:
         self.grid = ''
@@ -8,6 +9,7 @@ class GameBoard:
         self.score_board = ''
         self.grid = []
         self.curser = Item("Curser", 1, "I",10)
+        self.hits_misses_curser = [self.curser]
         # self.hit = Item("Hit", 1, "X")
         # self.miss = Item("Miss", 1, "O")
         # self.destroyer = Ship("Destroyer", 2, "D")
@@ -89,10 +91,10 @@ class GameBoard:
             self.grid[item.y][item.x] = item.identifyer
 
 
-    def display_set_ships(self, ships):
-        for ship in ships:
-            if ship.is_set == True:
-                self.mark_identifyer(ship)
+    def display_set_items(self, items):
+        for item in items:
+            if item.is_set == True:
+                self.mark_identifyer(item)
                 
     def display_grid(self, item):
         for cell in self.grid:
@@ -101,13 +103,14 @@ class GameBoard:
     def generate_grid(self, rows, columns):
         for y in range(0, rows):
             self.grid.append(["[ ]" for x in range(0, columns)])
-    def get_move_input (self, item, ships):
+
+    def get_move_input (self, item, items):
         item.is_set = True
-        self.display_set_ships(ships)
-        if item.name != "Battleship_1":
+        self.display_set_items(items)
+        if item.name != "Battleship_1" and item.name != "Curser":
             self.ship_initial_display(item)
         while True:
-            self.display_set_ships(ships)        
+            self.display_set_items(items)        
             self.display_grid(item)
             print(f"""Insructions:
             Up: w
@@ -115,13 +118,13 @@ class GameBoard:
             Left: a
             Right: d
             Toggle ship vertical/horizontal: t
-            Set {item.name}: press SPACE BAR, then ENTER.""")
+            Set {item.name} press SPACE BAR, then ENTER.""")
             self.move_direction = input(f"Enter an option above to move the {item.name} :")
             # self.move_direction = move_direction
             # move_direction = input(f"Enter an option above to move the {item.name} :")
             self.clear_item(item)
             self.move_item(item)
-            self.set(item, ships)
+            self.set(item, items)
             if self.move_direction == " ":
                 break
             else:
@@ -171,6 +174,12 @@ class GameBoard:
 
             
     def move_item(self, item):
+        #if item is ship use shipboard else use other board...fix math below
+        board = isinstance(item, Ship)
+        if board:
+            x = 10
+        else:
+            x = 20        
 
         if self.move_direction == "w":
             if item.y == 0 and item.is_vertical == True:
@@ -189,8 +198,10 @@ class GameBoard:
         elif self.move_direction == "a":
             if item.x == 0 and item.is_vertical == False:
                 item.x = 10 - item.size
-            elif item.x == 0:
+            elif item.x == 0 :
                 item.x = 9
+            elif item.x == 10:
+                item.x = 19
             else:
                 item.x -= 1
         elif self.move_direction == "d":
@@ -198,6 +209,8 @@ class GameBoard:
                 item.x = 0
             elif item.x == 9:
                 item.x = 0
+            elif item.x == 19:
+                item.x = 10
             else:
                 item.x += 1
         elif self.move_direction == 't':
