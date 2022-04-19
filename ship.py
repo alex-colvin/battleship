@@ -7,6 +7,8 @@ class Ship(Item):
         self.x_coordinates = []
         self.y_coordinates = []
         self.is_vertical = True
+        self.hits = 0
+        self.sunk = False
 
     def generate_ship_coordinates(self):
         self.clear_coordinates()
@@ -28,5 +30,10 @@ class Ship(Item):
     def toggle_vertical(self):
         self.is_vertical = not self.is_vertical
         self.generate_ship_coordinates()
+
+    def check_if_sunk(self):
+        if self.hits == self.size:
+            self.sunk = True
+
 
 

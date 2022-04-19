@@ -21,7 +21,7 @@ class GameBoard:
         self.move_directions = ['a','s','d','w']
         # self.ships = [self.destroyer, self.submarine, self.battleship_1, self.aircraft_carrier, self.battleship_2]
         self.collision_exists = True
-        #make item, hit and miss an item and make an item class
+        self.sunk_ships = 0
         
 
     def update_board(self):
@@ -33,6 +33,7 @@ class GameBoard:
         hit.is_set = True
         self.hits_misses_curser.append(hit)
         self.mark_identifyer(hit)
+        print("HIT!")
 
     def display_miss(self, x, y):
         miss = Item("Miss", 2, "O", x)
@@ -40,6 +41,7 @@ class GameBoard:
         miss.is_set = True
         self.hits_misses_curser.append(miss)
         self.mark_identifyer(miss)
+        print("MISS!")
     
     def display_sunk_ships(self):
         pass
@@ -139,8 +141,8 @@ class GameBoard:
     def get_move_input (self, item, items):
         item.is_set = True
         self.display_set_items(items)
-        if item.name != "Battleship_1" and item.name != "Curser":
-            self.ship_initial_display(item)
+        if item.name != "Battleship_1":
+            self.item_initial_display(item)
         while True:
             if item.name == "Curser":
                 self.mark_identifyer(self.curser)
@@ -188,25 +190,31 @@ class GameBoard:
                         self.move_back(item)
         # if recipient == False:
         #     item.x += 10
-        if self.collision_exists == True:
-            self.display_hit(item.x, item.y)
+        # if self.collision_exists == True:
+        #     self.display_hit(item.x, item.y)
+        # else:
+        #     self.display_miss(item.x, item.y)
+
+
+    def item_initial_display(self, item):#x is the right index
+        if item.name == 'Curser':
+            start = 10
+            stop = 19
         else:
-            self.display_miss(item.x, item.y)
-
-
-    def ship_initial_display(self, ship):#x is the right index
-        for x in range(10):
+            start = 0
+            stop = 9
+        for x in range(start, stop, 1):
             n = 0
             for y in range(10):
                 if self.grid[y][x] == '[ ]':
                     n += 1
                 else:
                     n = 0
-                if n == ship.size:
-                    ship.x = x
-                    ship.y = y - ship.size + 1
+                if n == item.size:
+                    item.x = x
+                    item.y = y - item.size + 1
                     break
-            if n == ship.size:
+            if n == item.size:
                 break
 
         # def generate_grid(self, rows, columns):
