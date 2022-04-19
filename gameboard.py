@@ -27,48 +27,80 @@ class GameBoard:
     def update_board(self):
         pass
 
-    def display_hit(self):
-        pass
+    def display_hit(self, x, y):
+        hit = Item("Hit", 1, "X", x)
+        hit.y = y
+        hit.is_set = True
+        self.hits_misses_curser.append(hit)
+        self.mark_identifyer(hit)
 
-    def display_miss(self):
-        pass
+    def display_miss(self, x, y):
+        miss = Item("Miss", 2, "O", x)
+        miss.y = yield
+        miss.is_set = True
+        self.hits_misses_curser.append(miss)
+        self.mark_identifyer(miss)
     
     def display_sunk_ships(self):
         pass
 
-    def check_collisions(self, ship, ships):
-        ship.generate_ship_coordinates()
+    def check_collisions(self, item, items):
+        if item.size > 1:
+            item.generate_ship_coordinates()
         self.collision_exists = False
-        for boat in ships:
-            if boat.name == ship.name:
+        for boat in items:
+            if boat.name == item.name:
                 pass
-            elif ship.is_vertical == True:
-                if boat.is_vertical == True:
-                    if ship.x == boat.x:
-                        for y in ship.y_coordinates:
-                            for z in boat.y_coordinates:
-                                if y == z:
-                                    self.collision_exists = True
-                                    break
-                else:
-                    for x in boat.x_coordinates:
-                        if ship.x == x:
-                            for y in ship.y_coordinates:
-                                if y == boat.y:
-                                    self.collision_exists = True
-            elif ship.is_vertical == False:
-                if boat.is_vertical == False:
-                    if ship.y == boat.y:
-                        for x in ship.x_coordinates:
-                            for w in boat.x_coordinates:
+            elif item.is_vertical == True:
+                self.check_vertical(item, boat)
+            elif item.is_vertical == False:
+                self.check_horizontal(item, boat)
+
+    def check_vertical (self, item, boat):        
+        if boat.is_vertical == True:
+            if item.x == boat.x:                
+                for z in boat.y_coordinates:
+                    if item.size > 1:
+                        for y in item.y_coordinates:                        
+                            if y == z:
+                                self.collision_exists = True
+                                break
+                    else:
+                        if item.y == z:
+                            self.collision_exists = True
+                            break
+        else:
+            for x in boat.x_coordinates:
+                if item.x == x:
+                    if item.size > 1:
+                        for y in item.y_coordinates:
+                            if y == boat.y:
+                                self.collision_exists = True
+                    else:
+                        if item.y == boat.y:
+                            self.collision_exists = True
+
+    def check_horizontal(self, item, boat):
+        if boat.is_vertical == False:
+            if item.y == boat.y:
+                for w in boat.x_coordinates:
+                    if item.size > 1:
+                        for x in item.x_coordinates:                        
                                 if x == w:
                                     self.collision_exists = True
-                else:
-                    for y in boat.y_coordinates:
-                        if ship.y == y:
-                            for x in ship.x_coordinates:
-                                if x == boat.x:
-                                    self.collision_exists = True
+                    else:
+                        if item.x == w:
+                            self.collision_exists = True
+        else:
+            for y in boat.y_coordinates:
+                if item.y == y:
+                    if item.size > 1:
+                        for x in item.x_coordinates:
+                            if x == boat.x:
+                                self.collision_exists = True
+                    else:
+                        if item.x == boat.x:
+                            self.collision_exists = True
                 
             
 
@@ -110,7 +142,10 @@ class GameBoard:
         if item.name != "Battleship_1" and item.name != "Curser":
             self.ship_initial_display(item)
         while True:
-            self.display_set_items(items)        
+            if item.name == "Curser":
+                self.mark_identifyer(self.curser)
+            self.display_set_items(items)  
+            self.display_set_items(self.hits_misses_curser)      
             self.display_grid(item)
             print(f"""Insructions:
             Up: w
@@ -124,22 +159,40 @@ class GameBoard:
             # move_direction = input(f"Enter an option above to move the {item.name} :")
             self.clear_item(item)
             self.move_item(item)
-            self.set(item, items)
             if self.move_direction == " ":
+                self.set(item, items, recipient=False)            
                 break
             else:
                 self.move_directions.append(self.move_direction)
                    
-    def set(self, item, ships):
+    def set(self, item, ships, recipient):
         if self.move_direction == " ":
-            self.collision_exists = True
-            while self.collision_exists == True:
-                for move in self.move_directions[::-1]:          
-                    self.check_collisions(item, ships)
-                    if self.collision_exists == False:
-                        break
-                    self.move_direction = move
-                    self.move_back(item)
+            if item.name == 'Curser':
+                item.x -= 10
+                self.check_collisions(item, ships) 
+                if recipient == False:
+                    item.x += 10
+                    if self.collision_exists == True:
+                        self.display_hit(item.x, item.y)
+                    else:
+                        self.display_miss(item.x, item.y)
+                item.x = 10
+            else:
+                self.collision_exists = True
+                while self.collision_exists == True:
+                    for move in self.move_directions[::-1]:          
+                        self.check_collisions(item, ships)
+                        if self.collision_exists == False:
+                            break
+                        self.move_direction = move
+                        self.move_back(item)
+        # if recipient == False:
+        #     item.x += 10
+        if self.collision_exists == True:
+            self.display_hit(item.x, item.y)
+        else:
+            self.display_miss(item.x, item.y)
+
 
     def ship_initial_display(self, ship):#x is the right index
         for x in range(10):

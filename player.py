@@ -11,7 +11,9 @@ class Player:
         self.battleship_2 = Ship("Battleship_2", 4, "B" )
         self.aircraft_carrier = Ship("Aircraft Carrier", 5, "A")
         self.ships = [self.destroyer, self.submarine, self.battleship_1, self.aircraft_carrier, self.battleship_2]
-
+        self.set_ships = []
+        self.fire_x = 0
+        self.fire_y = 0
 
     def move_cursor(self):
         pass
@@ -26,9 +28,8 @@ class Player:
         pass
 
     def fire(self, ships):
-        # move the curser
-        self.gameboard.get_move_input(self.gameboard.curser, self.gameboard.hits_misses_curser)
-        # select the position
+        self.gameboard.get_move_input(self.gameboard.curser, ships)
+        self.gameboard.curser.x -= 10
         # check collision on other players board
         # if collision exists hit...else miss
         pass
